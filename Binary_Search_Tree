@@ -1,0 +1,319 @@
+//// if i run inorder in bst then i will get a sorted array
+//// the minimum value in a bst is the left most value 
+
+//// the maximum value in the bst is the right most value
+//// inorder precessor and inorder successor
+
+// inorder precessor mean if i print the bst in sorted order 
+/// the value which is before that node value is inorder precessor
+
+/// inorder succesor the value which is after that node value
+
+
+/*
+
+         50
+        /  \
+    20
+*/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+
+class Node{
+    public:
+        int data;
+        Node* left;
+        Node* right;
+    
+    Node(int d)
+    {
+        this->data=d;
+        this->left=NULL;
+
+        this->right=NULL;
+    }
+};
+
+
+Node* minValue(Node* &root)
+{
+    Node*  temp=root;
+
+    while(temp->left!=NULL)
+    {
+        temp=temp->left;
+    }
+    return temp;
+}
+
+
+void levelOrderTraversal(Node* root) {
+    queue<Node*> q;
+    q.push(root);
+    q.push(NULL);
+
+    while(!q.empty()) {
+        Node* temp = q.front();
+        q.pop();
+
+        if(temp == NULL) { 
+            //purana level complete traverse ho chuka hai
+            cout << endl;
+            if(!q.empty()) { 
+                //queue still has some child ndoes
+                q.push(NULL);
+            }  
+        }
+        else{
+            cout << temp -> data << " ";
+            if(temp ->left) {
+                q.push(temp ->left);
+            }
+
+            if(temp ->right) {
+                q.push(temp ->right);
+            }
+        }
+    }
+
+}
+
+void inorder(Node* root) {
+    //base case
+    if(root == NULL) {
+        return ;
+    }
+
+    inorder(root->left);
+    cout << root-> data << " ";
+    inorder(root->right);
+
+}
+
+
+//// deletion operation in bst
+
+//// step1: if the node is a leaf node then 
+/// then remove that node and retur null
+
+/// step2: if the node has on child left or right
+//// remove the node and replace that node with left or right node
+
+
+/// step3: if the node has both left and right child
+
+/// then take the maximum value from the left and replace the node with that value 
+
+/// then remove the value 
+
+/// take minumum value from the right subtree replace 
+// with taht node and remove the right subtree minumum value
+
+
+// average time complexity for deletion is O(h)
+/// wrost time complexity is O(n) which is for squuz binary tree
+
+Node* deleteFromBST(Node* root,int val)
+{
+    //base case
+    if(root==NULL)
+    {
+        return root;
+    }
+
+   if(root->data == val)
+   {
+         if(root->left==NULL && root->right==NULL)
+         {
+        ///  0 child
+            delete root;
+            return NULL;
+         }
+
+    // 1 child 
+
+    // left child
+
+    if(root->left !=NULL && root->right==NULL)
+    {
+        Node* temp=root->left;
+        delete root;
+        return temp;
+    }
+
+    /// right child
+
+
+    if(root->left ==NULL && root->right!=NULL)
+    {
+        Node* temp=root->right;
+        delete root;
+        return temp;
+    }
+    //// 2 child 
+
+    if(root->left!=NULL && root->right!=NULL)
+    {
+        int mini=minValue(root->right)->data;
+        root->data=mini;
+        root->right=deleteFromBST(root->right,mini);
+        return root;
+    }
+
+   }
+   else if(root->data > val)
+   {
+        //left parte ase
+
+        root->left = deleteFromBST(root->left,val);
+        return root;
+   }
+   else{
+    ///right parte ase
+
+    root->right=deleteFromBST(root->right,val);
+    return root;
+   }
+}
+
+// time complexity for the insrtion code is O(logn)
+Node* insertIntoBST(Node* &root,int d)
+{
+    //base case
+
+    if(root==NULL)
+    {
+        root=new Node(d);
+        return root;
+    }
+
+    if(d > root -> data)
+    {
+        root->right=insertIntoBST(root->right,d);
+    }
+    else{
+        root->left=insertIntoBST(root->left,d);
+    }
+
+    return root;
+}
+
+void takeInput(Node* &root)
+{
+    int data;
+    cin>>data;
+
+    while(data != -1)
+    {
+        insertIntoBST(root,data);
+
+        cin>>data;
+    }
+}
+// avearage time complexity is O(H)
+// wrost time complexity is O(n) which is for squez 
+/// space complextiy for recursion is O(h)
+// bool searchInBST(Node* & root,int d)
+// {
+//     if(root==NULL)
+//     {
+//         return false;
+//     }
+
+//     if(root->data == d)
+//     {
+//         return true;
+//     }
+//     if(root->data > d)
+//     {
+//         /// left part 
+
+//         return searchInBST(root->left,d);
+//     }
+
+//     else{
+//         return searchInBST(root->right,d);
+//     }
+// }
+
+//// optimise for search in a bst
+
+bool searchInBST(Node*  root,int d)
+{
+    Node* temp=root;
+
+    while(temp!=NULL)
+    {
+        if(temp->data == d)
+        {
+            return true;
+        }
+        if(temp->data > d)
+        {
+            temp=temp->left;
+        }
+
+        else{
+            temp=temp->right;
+        }
+    }
+
+    return false;
+}
+
+
+
+Node* maxValue(Node* & root)
+{
+    Node*  temp=root;
+
+    while(temp->right!=NULL)
+    {
+        temp=temp->right;
+    }
+
+    return temp;
+}
+
+
+
+int main()
+{
+    Node* root=NULL;
+
+    cout<<"Enter data to create BST"<<endl;
+
+    takeInput(root);
+
+    //  cout<<"printing the bst"<<endl;
+
+      levelOrderTraversal(root);
+
+      cout<<endl;
+
+    //inorder(root);
+
+   //cout<< searchInBST(root,60)<<endl;
+
+//    Node* res=minValue(root);
+
+//    cout<<res->data<<endl;
+
+//    Node* res1=maxValue(root);
+   
+
+//    cout<<res1->data<<endl;
+
+
+   root=deleteFromBST(root,30);
+
+    levelOrderTraversal(root);
+
+    cout<<endl;
+
+
+    return 0;
+
+}
